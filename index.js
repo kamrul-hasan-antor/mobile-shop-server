@@ -18,13 +18,21 @@ const client = new MongoClient(uri, {
   useUnifiedTopology: true,
 });
 client.connect((err) => {
-  const collection = client
-    .db(`${process.env.DB_USER}`)
+  const mobileCollection = client
+    .db(`${process.env.DB_NAME}`)
     .collection(`${process.env.DB_COLLECTION}`);
+  app.post("/addProduct", (req, res) => {
+    const newEvent = req.body;
+    console.log(newEvent);
+    mobileCollection.insertOne(newEvent).then((result) => {
+      console.log(result.insertedCount);
+      res.send(result.insertedCount > 0);
+    });
+  });
 
-  client.close();
+  //   client.close();
 });
 
 app.listen(port, () => {
-  console.log(`example at http://localhost:${port}`);
+  console.log(`http://localhost:${port}`);
 });
