@@ -18,13 +18,20 @@ const client = new MongoClient(uri, {
   useUnifiedTopology: true,
 });
 client.connect((err) => {
-  const mobileCollection = client
+  const productsCollection = client
     .db(`${process.env.DB_NAME}`)
     .collection(`${process.env.DB_COLLECTION}`);
+
+  app.get("/products", (req, res) => {
+    productsCollection.find().toArray((err, items) => {
+      res.send(items);
+    });
+  });
+
   app.post("/addProduct", (req, res) => {
     const newEvent = req.body;
     console.log(newEvent);
-    mobileCollection.insertOne(newEvent).then((result) => {
+    productsCollection.insertOne(newEvent).then((result) => {
       console.log(result.insertedCount);
       res.send(result.insertedCount > 0);
     });
