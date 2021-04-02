@@ -21,6 +21,9 @@ client.connect((err) => {
   const productsCollection = client
     .db(`${process.env.DB_NAME}`)
     .collection(`${process.env.DB_COLLECTION}`);
+  const productCollectionForOrder = client
+    .db(`${process.env.DB_NAME}`)
+    .collection(`${process.env.DB_COLLECTION}`);
 
   app.get("/products", (req, res) => {
     productsCollection.find().toArray((err, items) => {
@@ -29,15 +32,44 @@ client.connect((err) => {
   });
 
   app.post("/addProduct", (req, res) => {
-    const newEvent = req.body;
-    console.log(newEvent);
-    productsCollection.insertOne(newEvent).then((result) => {
+    const newProduct = req.body;
+    console.log(newProduct);
+    productsCollection.insertOne(newProduct).then((result) => {
       console.log(result.insertedCount);
       res.send(result.insertedCount > 0);
     });
   });
 
-  //   client.close();
+  //   client.close();////////////
+  app.get("/checkout/:_id", (req, res) => {
+    console.log(req.params._id);
+    productCollection
+      .find({ _id: ObjectId(req.params._id) })
+
+      .toArray((err, documents) => {
+        res.send(documents[0]);
+      });
+  });
+
+  app.post("/addOrders", (req, res) => {
+    const newOrder = req.body;
+    productCollectionForOrder.insertOne(newOrder).then((result) => {
+      res.send(result.insertedCount > 0);
+    });
+  });
+
+  app.get("/orders", (req, res) => {
+    productCollectionForOrder.find().toArray((err, items) => {
+      res.send(items);
+    });
+  });
+  app.delete("/delete/:_id", (req, res) => {
+    productCollection
+      .deleteOne({ _id: ObjectId(req.params.id) })
+      .then((result) => {
+        res.send(result.deletedCount > 0);
+      });
+  });
 });
 
 app.listen(port, () => {
