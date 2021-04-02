@@ -36,25 +36,22 @@ client.connect((err) => {
     const newProduct = req.body;
     console.log(newProduct);
     productsCollection.insertOne(newProduct).then((result) => {
-      console.log(result.insertedCount);
       res.send(result.insertedCount > 0);
     });
   });
 
   //   client.close();////////////
   app.get("/checkout/:_id", (req, res) => {
-    console.log(req.params._id);
     productsCollection
       .find({ _id: ObjectId(req.params._id) })
-
       .toArray((err, documents) => {
         res.send(documents[0]);
       });
   });
 
   app.post("/addOrders", (req, res) => {
-    const newOrder = req.body;
-    productCollectionForOrder.insertOne(newOrder).then((result) => {
+    const newOrders = req.body;
+    productCollectionForOrder.insertOne(newOrders).then((result) => {
       res.send(result.insertedCount > 0);
     });
   });
