@@ -73,7 +73,7 @@ client.connect((err) => {
 });
 
 app.get("/", (req, res) => {
-  res.send("hello !!!");
+  res.send("Welcome to Mobile Shop API......");
 });
 
 app.listen(port);
