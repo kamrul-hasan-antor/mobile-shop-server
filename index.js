@@ -14,7 +14,7 @@ app.use(express.json());
 app.use(cors());
 
 const uri = `mongodb+srv://${process.env.DB_USER}:${process.env.DB_PASS}@cluster0.dcrxy.mongodb.net/${process.env.DB_NAME}?retryWrites=true&w=majority`;
-// console.log(uri);
+
 const client = new MongoClient(uri, {
   useNewUrlParser: true,
   useUnifiedTopology: true,
@@ -23,10 +23,10 @@ const client = new MongoClient(uri, {
 client.connect((err) => {
   const productsCollection = client
     .db(`${process.env.DB_NAME}`)
-    .collection(`${process.env.DB_COLLECTION}`);
+    .collection("phones");
   const productCollectionForOrder = client
     .db(`${process.env.DB_NAME}`)
-    .collection(`${process.env.DB_COLLECTION}`);
+    .collection("users");
 
   app.get("/products", (req, res) => {
     productsCollection.find().toArray((err, items) => {
@@ -39,6 +39,7 @@ client.connect((err) => {
     console.log(newProduct);
     productsCollection.insertOne(newProduct).then((result) => {
       res.send(result.insertedCount > 0);
+      res.redirect("/");
     });
   });
 
@@ -65,7 +66,7 @@ client.connect((err) => {
   });
   app.delete("/delete/:_id", (req, res) => {
     productsCollection
-      .deleteOne({ _id: ObjectId(req.params.id) })
+      .deleteOne({ _id: ObjectId(req.params._id) })
       .then((result) => {
         res.send(result.deletedCount > 0);
       });
@@ -73,7 +74,7 @@ client.connect((err) => {
 });
 
 app.get("/", (req, res) => {
-  res.send("Welcome to Mobile Shop API......");
+  res.send("Welcome to Mobile Shop SERVER......");
 });
 
 app.listen(port);
