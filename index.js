@@ -43,7 +43,6 @@ client.connect((err) => {
     });
   });
 
-  //   client.close();////////////
   app.get("/checkout/:_id", (req, res) => {
     productsCollection
       .find({ _id: ObjectId(req.params._id) })
